@@ -31,7 +31,7 @@ class MCOMSearch(ttk.Frame):
         self.option_lf.pack(fill=X, expand=YES, anchor=N)
 
         self.create_term_row()
-        self.create_type_row()
+        #self.create_type_row()
         self.create_results_view()
 
         self.progressbar = ttk.Progressbar(
