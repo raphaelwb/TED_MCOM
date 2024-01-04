@@ -9,29 +9,31 @@ import time
 import json
 import webbrowser
 import os
+from data import PrepareData
+import sqlite3
+from pathlib import Path
+from jproperties import Properties
 
 class MCOMSearch(ttk.Frame):
 
     data = {}
     searching = False
-
+   
     def __init__(self, master):
         super().__init__(master, padding=15)
         self.pack(fill=BOTH, expand=YES)
 
-        # application variables
         _path = pathlib.Path().absolute().as_posix()
         self.path_var = ttk.StringVar(value=_path)
-        self.term_var = ttk.StringVar(value='termos')
+        #self.term_var = ttk.StringVar(value='Digite o termo da busca')
+        self.term_var = ttk.StringVar(value='code')
         self.type_var = ttk.StringVar(value='endswidth')
 
-        # header and labelframe option container
         option_text = "Preencha com os dados da busca"
         self.option_lf = ttk.Labelframe(self, text=option_text, padding=15)
         self.option_lf.pack(fill=X, expand=YES, anchor=N)
 
         self.create_term_row()
-        #self.create_type_row()
         self.create_results_view()
 
         self.progressbar = ttk.Progressbar(
@@ -107,15 +109,15 @@ class MCOMSearch(ttk.Frame):
     def selectItem(self,a):
         curItem = self.resultview.focus()
         item = self.resultview.item(curItem)
-        #print(item)
         cmd = self.data[item['values'][0]]["data"]
-        if ( item['values'][2] == "link"):
+        if ( item['values'][2] == "Link"):
+            print("Browser:",cmd)
             webbrowser.open(cmd)
         else:
+            print("System:",cmd)
             os.system(cmd)
 
     def create_results_view(self):
-        """Add result treeview to labelframe"""
         self.resultview = ttk.Treeview(
             master=self, 
             bootstyle=INFO, 
@@ -124,10 +126,10 @@ class MCOMSearch(ttk.Frame):
         )
         self.resultview.pack(fill=BOTH, expand=YES, pady=10)
 
-        # setup columns and use `scale_size` to adjust for resolution
         self.resultview.heading(0, text='Código', anchor=W)
         self.resultview.heading(1, text='Título', anchor=W)
-        self.resultview.heading(2, text='Tipo', anchor=E)
+        self.resultview.heading(2, text='Tipo', anchor=W)
+        #TODO: Colocar uma bandeirinha com os idiomas
         self.resultview.column(
             column=0, 
             anchor=W, 
@@ -194,24 +196,67 @@ class MCOMSearch(ttk.Frame):
     @staticmethod
     def search(term):
         MCOMSearch.set_searching(True)
-        data = {}
-        """Recursively search directory for matching files"""
-        record = {"title":"Code Org","type":"link", "data":"https://code.org/"}
-        MCOMSearch.data["001EX"] = record
-        record = {"title":"Calculadora","type":"command", "data":"/bin/gnome-calculator"}
-        MCOMSearch.data["002BC"] = record
-        time.sleep(0.6)
+        MCOMSearch.data = {}
+        print("Opening Database")
+        config_dir = str(Path.home())+"/.mcom"
+        dbFile = os.path.join(config_dir,"mcom.db")
+        propFile = os.path.join(config_dir,"conf.properties")
+        props = Properties()
+        try:
+            with open(propFile, 'rb') as config_file:
+                props.load(config_file)
+            hardware = props["HARDWARE"].data
+        except:
+            hardware = "ALL"
+        
+        print(hardware)
+        #TODO resolver o problema de usar multiplas Threads para abrir o DB apenas uma vez
+        conn = sqlite3.connect(dbFile)        
+        cur = conn.cursor()
+
+        if ( hardware != "ALL"):
+            sql = "Select * from data,data_keys,keys,data_hardware,hardware where data_keys.data_id = data.id and data_keys.key_id = keys.id and "\
+            "data_hardware.hardware_id = hardware.id and data_hardware.data_id = data.id and hardware.text = '"+hardware+"' AND ("\
+            "(title like '%"+term+"%' or description like '%"+term+"%') OR "\
+            "(data_keys.data_id = data.id and data_keys.key_id = keys.id and keys.text like '%"+term+"%'))"
+        else:
+            sql = "Select * from data,data_keys,keys where data_keys.data_id = data.id and data_keys.key_id = keys.id and "\
+            "(title like '%"+term+"%' or description like '%"+term+"%') OR "\
+            "(data_keys.data_id = data.id and data_keys.key_id = keys.id and keys.text like '%"+term+"%')"
+
+        print(sql)
+        cur.execute(sql)
+        rows = cur.fetchall()
+        for row in rows:
+            print(row)
+            type = "Link"
+            if ( row[4] == 1 ):
+                type = "App"
+            record = {"title":row[2],"type":type,"data":row[5]}
+            MCOMSearch.data[row[1]] = record
+        cur.close()
+        conn.close()
         MCOMSearch.set_searching(False)
         
     @staticmethod
     def set_searching(state=False):
-        """Set searching status"""
         MCOMSearch.searching = state
 
 if __name__ == '__main__':
 
+    try:
+        data = PrepareData()
+        data.update()
+    except:
+        print("Error Updating - Verify Internet")
+    
     app = ttk.Window("TVBox - TED MCOM", "journal")
     app.resizable(False,False)
     app.geometry("600x400")
     MCOMSearch(app)
+    print("Opening Database")
+    config_dir = str(Path.home())+"/.mcom"
+    dbFile = os.path.join(config_dir,"mcom.db")
+    MCOMSearch.conn = sqlite3.connect(dbFile)
+    print("Ready")
     app.mainloop()
