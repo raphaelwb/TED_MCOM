@@ -12,5 +12,5 @@ cp conf.properties ~/.mcom
 ```
 
 # Install Linux
-bash <(curl -s https://raw.githubusercontent.com/raphaelwb/TED_MCOM/main/install.sh)
+bash <(curl -s https://raw.githubusercontent.com/raphaelwb/TED_MCOM/main/install.sh)   
 python3 main.py
