@@ -10,3 +10,7 @@ Se quiser filtrar pelo harware na busca, configurar o arquivo conf.properties e 
 mkdir ~/.mcom
 cp conf.properties ~/.mcom
 ```
+
+# Install Linux
+bash <(curl -s https://raw.githubusercontent.com/raphaelwb/TED_MCOM/main/install.sh)
+python3 main.py
