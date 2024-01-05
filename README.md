@@ -22,5 +22,6 @@ Download requirements_win.txt
 Open Terminal and run    
 ```bash
 pip3 install -r requirements_win.txt   
-python3 main.py
+rename main.py main.pyw
 ```
+Double click on the icon to open the application
