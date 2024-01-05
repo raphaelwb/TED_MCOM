@@ -16,7 +16,7 @@ bash <(curl -s https://raw.githubusercontent.com/raphaelwb/TED_MCOM/main/install
 python3 main.py
 
 # Install Windows
-Install python3   
+Open terminal and type python, follow instructions   
 Download main.py   
 Download requirements_win.txt   
 Open Terminal and run    
