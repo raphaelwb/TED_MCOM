@@ -22,8 +22,6 @@ class PrepareData:
 
     def __init__(self):
         self.config_dir = os.path.join(Path.home(),".mcom")
-        if os.path.isdir(self.config_dir) == False:
-            os.mkdir(self.config_dir)
            
     def addElement(self,ele,set):
         itens = []
@@ -308,7 +306,7 @@ class MCOMSearch(ttk.Frame):
             f"Clique Sim para acessar o conteúdo ..."\
     
         mb = Messagebox.show_question(Text, title=code)
-        if ( mb != "No" ):
+        if ( mb == "Yes" or mb == "Sim" ):
             cmd = self.data[code]["data"]
             if ( item['values'][2] == "Link"):
                 logging.info(f"Browser:{cmd}")
@@ -452,6 +450,10 @@ class MCOMSearch(ttk.Frame):
         MCOMSearch.searching = state
 
 if __name__ == '__main__':
+
+    config_dir = os.path.join(Path.home(),".mcom")
+    if os.path.isdir(config_dir) == False:
+        os.mkdir(config_dir)
 
     logging.basicConfig(level=logging.INFO, filename=os.path.join(Path.home(),".mcom","log.txt"), format="%(asctime)s - %(levelname)s - %(message)s")
 
