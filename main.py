@@ -74,7 +74,6 @@ class PrepareData:
         return txt
 
     def update(self):
-
         if ( self.verifyVersion() ):
 
             logging.info("Creating Database")
@@ -84,7 +83,7 @@ class PrepareData:
             try:
                 os.remove(dbFile)
             except OSError as e:
-                logging.critical(e, exc_info=True) 
+                logging.critical(e, exc_info=True)
 
             keys = set()
             language = set()
@@ -98,9 +97,11 @@ class PrepareData:
                 type = 1
                 #print(self.df.iloc[l])
                 data = self.df.iloc[l]["Data"]
-
                 if ( "http" in data ):
                     type = 0
+
+                self.df.fillna('', inplace=True)
+                tutorial = self.df.iloc[l]["Tutorial"]
 
                 objects.append({"code":str(self.df.iloc[l]["Código"]),
                             "title":str(self.df.iloc[l]["Título"]),
@@ -109,7 +110,8 @@ class PrepareData:
                             "data":data,
                             "keys":self.addElement(str(self.df.iloc[l]["Palavras Chave"]),keys),
                             "language":self.addElement(str(self.df.iloc[l]["Idiomas"]),language),
-                            "hardware":self.addElement(str(self.df.iloc[l]["Hardware"]),hardware)
+                            "hardware":self.addElement(str(self.df.iloc[l]["Hardware"]),hardware),
+                            "tutorial": tutorial
                             })
 
 
@@ -140,7 +142,7 @@ class PrepareData:
             sql = "CREATE TABLE data_hardware (id INTEGER PRIMARY KEY AUTOINCREMENT, data_id INTEGER, hardware_id INTEGER, FOREIGN KEY(data_id) REFERENCES data(id), FOREIGN KEY(hardware_id) REFERENCES hardware(id))"
             cur.execute(sql)
 
-            sql = "CREATE TABLE data(id INTEGER PRIMARY KEY AUTOINCREMENT, code TEXT, title TEXT, description TEXT, type INTEGER, data TEXT, languages TEXT)"
+            sql = "CREATE TABLE data(id INTEGER PRIMARY KEY AUTOINCREMENT, code TEXT, title TEXT, description TEXT, type INTEGER, data TEXT, languages TEXT, tutorial TEXT)"
 
             cur.execute(sql)
 
@@ -149,7 +151,7 @@ class PrepareData:
             hardware = list(hardware)
 
             for o in objects:
-                sql = "INSERT INTO data(code,title,description,type,data,languages) VALUES('%s','%s','%s','%s','%s','%s')" % (o["code"],o["title"],o["description"],o["type"],o["data"],self.toText(o["language"]))
+                sql = "INSERT INTO data(code,title,description,type,data,languages,tutorial) VALUES('%s','%s','%s','%s','%s','%s','%s')" % (o["code"],o["title"],o["description"],o["type"],o["data"],self.toText(o["language"]),o["tutorial"])
                 logging.info(sql)
                 cur.execute(sql)
                 data_id = cur.lastrowid
@@ -296,7 +298,7 @@ class MCOMSearch(ttk.Frame):
         title = data["title"]
         description = data["description"]
         languages = data["languages"]
-        
+        tutorial = data["tutorial"]
 
         Text = f"Código: {code}\n"\
             f"Título: {title}\n"\
@@ -304,8 +306,17 @@ class MCOMSearch(ttk.Frame):
             f"Idiomas: {languages}\n"\
             "\n"\
             f"Clique Sim para acessar o conteúdo ..."\
-    
-        mb = Messagebox.show_question(Text, title=code)
+
+        if tutorial == '':
+            mb = Messagebox.show_question(Text, title=code, buttons=['No:secondary', 'Yes:primary'])
+        else:
+            mb = Messagebox.show_question(Text, title=code, buttons=['Assistir tutorial:info', 'No:secondary', 'Yes:primary'])
+            if mb == "Assistir tutorial":
+                cmd = self.data[code]["tutorial"]
+                print(f'valor do tutorial: {tutorial}')
+                logging.info(f"Browser:{cmd}")
+                webbrowser.open(cmd)
+
         if ( mb == "Yes" or mb == "Sim" ):
             cmd = self.data[code]["data"]
             if ( item['values'][2] == "Link"):
@@ -439,7 +450,7 @@ class MCOMSearch(ttk.Frame):
             type = "Link"
             if ( row[4] == 1 ):
                 type = "App"
-            record = {"title":row[2],"type":type,"data":row[5],"description":row[3],"languages":row[6]}
+            record = {"title":row[2],"type":type,"data":row[5],"description":row[3],"languages":row[6], "tutorial": row[7]}
             MCOMSearch.data[row[1]] = record
         cur.close()
         conn.close()
