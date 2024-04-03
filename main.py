@@ -460,6 +460,7 @@ class MCOMSearch(ttk.Frame):
     @staticmethod
     def set_searching(state=False):
         MCOMSearch.searching = state
+from ttkbootstrap.icons import Icon
 
 if __name__ == '__main__':
 
@@ -474,9 +475,8 @@ if __name__ == '__main__':
         data.update()
     except Exception as e:
         logging.critical(e, exc_info=True) 
-    
-    app = ttk.Window("TVBox - TED MCOM", "journal")
 
+    app = ttk.Window("TVBox - TED MCOM", iconphoto="Logo-FenixBook-elemento.png")
     app.style.load_user_themes('fenixbook_themes.json')
     app.style.theme_use('fenixbooktheme1')
 
