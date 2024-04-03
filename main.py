@@ -204,6 +204,7 @@ class MCOMSearch(ttk.Frame):
    
     def __init__(self, master):
         super().__init__(master, padding=15)
+
         self.pack(fill=BOTH, expand=YES)
        
         _path = pathlib.Path().absolute().as_posix()
@@ -310,7 +311,7 @@ class MCOMSearch(ttk.Frame):
         if tutorial == '':
             mb = Messagebox.show_question(Text, title=code, buttons=['No:secondary', 'Yes:primary'])
         else:
-            mb = Messagebox.show_question(Text, title=code, buttons=['Assistir tutorial:info', 'No:secondary', 'Yes:primary'])
+            mb = Messagebox.show_question(Text, title=code, buttons=['Assistir tutorial:dark', 'No:secondary', 'Yes:primary'])
             if mb == "Assistir tutorial":
                 cmd = self.data[code]["tutorial"]
                 print(f'valor do tutorial: {tutorial}')
@@ -329,7 +330,7 @@ class MCOMSearch(ttk.Frame):
     def create_results_view(self):
         self.resultview = ttk.Treeview(
             master=self, 
-            bootstyle=INFO, 
+            bootstyle=PRIMARY,
             columns=[0, 1, 2, 3, 4],
             show=HEADINGS
         )
@@ -475,7 +476,11 @@ if __name__ == '__main__':
         logging.critical(e, exc_info=True) 
     
     app = ttk.Window("TVBox - TED MCOM", "journal")
-    app.resizable(False,False)
+
+    app.style.load_user_themes('fenixbook_themes.json')
+    app.style.theme_use('fenixbooktheme1')
+
+    app.resizable(False, False)
     app.geometry("600x400")
     MCOMSearch(app)
     logging.info("Opening Database")
@@ -483,4 +488,5 @@ if __name__ == '__main__':
     dbFile = os.path.join(config_dir,"mcom.db")
     MCOMSearch.conn = sqlite3.connect(dbFile)
     logging.info("Ready")
+
     app.mainloop()
