@@ -1,0 +1,50 @@
+{
+    "themes": [
+      {
+        "fenixbooktheme1": {
+            "type": "light",
+            "colors": {
+                "primary": "#f29135",
+                "secondary": "#fcc7a3",
+                "success": "#38b44a",
+                "info": "#00a99d",
+                "warning": "#fff200",
+                "danger": "#ed1d24",
+                "light": "#E9ECEF",
+                "dark": "#192867",
+                "bg": "#ffffff",
+                "fg": "#333333",
+                "selectbg": "#fcc7a3",
+                "selectfg": "#ffffff",
+                "border": "#fcc7a3",
+                "inputfg": "#333333",
+                "inputbg": "#fff",
+                "active": "#e5e5e5"
+            }
+        }
+      },
+      {
+        "fenixbooktheme2": {
+            "type": "light",
+            "colors": {
+                "primary": "#f29135",
+                "secondary": "#fcc7a3",
+                "success": "#38b44a",
+                "info": "#00a99d",
+                "warning": "#fff200",
+                "danger": "#ed1d24",
+                "light": "#E9ECEF",
+                "dark": "#192867",
+                "bg": "#ffffff",
+                "fg": "#333333",
+                "selectbg": "#aea79f",
+                "selectfg": "#ffffff",
+                "border": "#ced4da",
+                "inputfg": "#333333",
+                "inputbg": "#fff",
+                "active": "#e5e5e5"
+            }
+        }
+      }
+    ]
+  }
