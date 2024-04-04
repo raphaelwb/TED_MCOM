@@ -227,6 +227,12 @@ class MCOMSearch(ttk.Frame):
         )
         self.progressbar.pack(fill=X, expand=YES)
 
+        self.logoMcom = PhotoImage(file="img/Logo_MCOM.png")
+        self.logoMcom = self.logoMcom.subsample(8, 8)
+        self.labelMcom = ttk.Label(self, image=self.logoMcom)
+        self.labelMcom.configure(padding=5, border=0)
+        self.labelMcom.pack()
+
     def create_path_row(self):
         path_row = ttk.Frame(self.option_lf)
         path_row.pack(fill=X, expand=YES)
@@ -244,7 +250,7 @@ class MCOMSearch(ttk.Frame):
 
     def create_term_row(self):
         term_row = ttk.Frame(self.option_lf)
-        term_row.pack(fill=X, expand=YES, pady=15)
+        term_row.pack(fill=X, expand=YES, pady=10)
         term_lbl = ttk.Label(term_row, text="Termos", width=8)
         term_lbl.pack(side=LEFT, padx=(15, 0))
         term_ent = ttk.Entry(term_row, textvariable=self.term_var)
@@ -334,7 +340,7 @@ class MCOMSearch(ttk.Frame):
             columns=[0, 1, 2, 3, 4],
             show=HEADINGS
         )
-        self.resultview.pack(fill=BOTH, expand=YES, pady=0)
+        self.resultview.pack(fill=BOTH, expand=YES, pady=5)
 
         self.resultview.heading(0, text='Código', anchor=W)
         self.resultview.heading(1, text='Título', anchor=W)
@@ -489,6 +495,13 @@ if __name__ == '__main__':
     label = ttk.Label(app, image=logo)
     label.configure(padding=0, border=0)
     label.pack()
+    '''
+    logoMcom = PhotoImage(file="img/Logo_MCOM.png")
+    logoMcom = logoMcom.subsample(8, 8)
+    labelMcom = ttk.Label(app, image=logoMcom)
+    labelMcom.configure(padding=0, border=0)
+    labelMcom.pack()
+    '''
     app.resizable(False, False)
     app.geometry("600x500")
     MCOMSearch(app)
