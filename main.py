@@ -203,7 +203,7 @@ class MCOMSearch(ttk.Frame):
     searching = False
    
     def __init__(self, master):
-        super().__init__(master, padding=15)
+        super().__init__(master, padding=[15, 0, 15, 0])
 
         self.pack(fill=BOTH, expand=YES)
        
@@ -214,7 +214,7 @@ class MCOMSearch(ttk.Frame):
         self.type_var = ttk.StringVar(value='endswidth')
 
         option_text = "Preencha com os dados da busca"
-        self.option_lf = ttk.Labelframe(self, text=option_text, padding=15)
+        self.option_lf = ttk.Labelframe(self, text=option_text, padding=[15, 0, 15, 0])
         self.option_lf.pack(fill=X, expand=YES, anchor=N)
 
         self.create_term_row()
@@ -334,7 +334,7 @@ class MCOMSearch(ttk.Frame):
             columns=[0, 1, 2, 3, 4],
             show=HEADINGS
         )
-        self.resultview.pack(fill=BOTH, expand=YES, pady=10)
+        self.resultview.pack(fill=BOTH, expand=YES, pady=0)
 
         self.resultview.heading(0, text='Código', anchor=W)
         self.resultview.heading(1, text='Título', anchor=W)
@@ -460,7 +460,10 @@ class MCOMSearch(ttk.Frame):
     @staticmethod
     def set_searching(state=False):
         MCOMSearch.searching = state
-from ttkbootstrap.icons import Icon
+
+
+from tkinter import PhotoImage
+
 
 if __name__ == '__main__':
 
@@ -476,16 +479,22 @@ if __name__ == '__main__':
     except Exception as e:
         logging.critical(e, exc_info=True) 
 
-    app = ttk.Window("TVBox - TED MCOM", iconphoto="Logo-FenixBook-elemento.png")
+    app = ttk.Window("TVBox - TED MCOM", iconphoto="img/Logo-FenixBook-elemento.png")
+    app.place_window_center()
     app.style.load_user_themes('fenixbook_themes.json')
     app.style.theme_use('fenixbooktheme1')
 
+    logo = PhotoImage(file="img/Logo-FenixBook-horizontal.png")
+    logo = logo.subsample(8, 8)
+    label = ttk.Label(app, image=logo)
+    label.configure(padding=0, border=0)
+    label.pack()
     app.resizable(False, False)
-    app.geometry("600x400")
+    app.geometry("600x500")
     MCOMSearch(app)
     logging.info("Opening Database")
     config_dir = str(Path.home())+"/.mcom"
-    dbFile = os.path.join(config_dir,"mcom.db")
+    dbFile = os.path.join(config_dir, "mcom.db")
     MCOMSearch.conn = sqlite3.connect(dbFile)
     logging.info("Ready")
 
