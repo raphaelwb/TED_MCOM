@@ -196,6 +196,7 @@ import sqlite3
 from pathlib import Path
 from jproperties import Properties
 from ttkbootstrap.dialogs import Messagebox
+from PIL import Image, ImageTk
 
 class MCOMSearch(ttk.Frame):
 
@@ -203,7 +204,7 @@ class MCOMSearch(ttk.Frame):
     searching = False
    
     def __init__(self, master):
-        super().__init__(master, padding=[15, 0, 15, 0])
+        super().__init__(master, padding=[15, 5, 15, 5])
 
         self.pack(fill=BOTH, expand=YES)
        
@@ -214,7 +215,7 @@ class MCOMSearch(ttk.Frame):
         self.type_var = ttk.StringVar(value='endswidth')
 
         option_text = "Preencha com os dados da busca"
-        self.option_lf = ttk.Labelframe(self, text=option_text, padding=[15, 0, 15, 0])
+        self.option_lf = ttk.Labelframe(self, text=option_text, padding=[15, 5, 15, 5])
         self.option_lf.pack(fill=X, expand=YES, anchor=N)
 
         self.create_term_row()
@@ -227,11 +228,13 @@ class MCOMSearch(ttk.Frame):
         )
         self.progressbar.pack(fill=X, expand=YES)
 
-        self.logoMcom = PhotoImage(file="img/Logo-MCOM.png")
-        self.logoMcom = self.logoMcom.subsample(8, 8)
+        logoMcom = Image.open('img/Logo-MCOM.png')
+        logoMcom = logoMcom.resize((int(logoMcom.size[0] / 8), int(logoMcom.size[1] / 8)), Image.LANCZOS)
+        self.logoMcom = ImageTk.PhotoImage(logoMcom)
         self.labelMcom = ttk.Label(self, image=self.logoMcom)
         self.labelMcom.configure(padding=5, border=0)
         self.labelMcom.pack()
+
 
     def create_path_row(self):
         path_row = ttk.Frame(self.option_lf)
@@ -468,9 +471,6 @@ class MCOMSearch(ttk.Frame):
         MCOMSearch.searching = state
 
 
-from tkinter import PhotoImage
-
-
 if __name__ == '__main__':
 
     config_dir = os.path.join(Path.home(),".mcom")
@@ -490,18 +490,13 @@ if __name__ == '__main__':
     app.style.load_user_themes('fenixbook_themes.json')
     app.style.theme_use('fenixbooktheme1')
 
-    logo = PhotoImage(file="img/Logo-FenixBook-horizontal.png")
-    logo = logo.subsample(8, 8)
+    img = Image.open("img/Logo-FenixBook-horizontal.png")
+    img = img.resize((int(img.size[0] / 8), int(img.size[1] / 8)), Image.LANCZOS)
+    logo = ImageTk.PhotoImage(img)
     label = ttk.Label(app, image=logo)
     label.configure(padding=0, border=0)
     label.pack()
-    '''
-    logoMcom = PhotoImage(file="img/Logo-MCOM.png")
-    logoMcom = logoMcom.subsample(8, 8)
-    labelMcom = ttk.Label(app, image=logoMcom)
-    labelMcom.configure(padding=0, border=0)
-    labelMcom.pack()
-    '''
+
     app.resizable(False, False)
     app.geometry("600x500")
     MCOMSearch(app)
