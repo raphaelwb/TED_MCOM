@@ -227,7 +227,7 @@ class MCOMSearch(ttk.Frame):
         )
         self.progressbar.pack(fill=X, expand=YES)
 
-        self.logoMcom = PhotoImage(file="img/Logo_MCOM.png")
+        self.logoMcom = PhotoImage(file="img/Logo-MCOM.png")
         self.logoMcom = self.logoMcom.subsample(8, 8)
         self.labelMcom = ttk.Label(self, image=self.logoMcom)
         self.labelMcom.configure(padding=5, border=0)
@@ -496,7 +496,7 @@ if __name__ == '__main__':
     label.configure(padding=0, border=0)
     label.pack()
     '''
-    logoMcom = PhotoImage(file="img/Logo_MCOM.png")
+    logoMcom = PhotoImage(file="img/Logo-MCOM.png")
     logoMcom = logoMcom.subsample(8, 8)
     labelMcom = ttk.Label(app, image=logoMcom)
     labelMcom.configure(padding=0, border=0)
