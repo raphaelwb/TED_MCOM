@@ -229,7 +229,7 @@ class MCOMSearch(ttk.Frame):
         self.progressbar.pack(fill=X, expand=YES)
 
         logoMcom = Image.open('img/Logo-MCOM.png')
-        logoMcom = logoMcom.resize((int(logoMcom.size[0] / 8), int(logoMcom.size[1] / 8)), Image.LANCZOS)
+        logoMcom = logoMcom.resize((int(logoMcom.size[0] / 21), int(logoMcom.size[1] / 21)), Image.LANCZOS)
         self.logoMcom = ImageTk.PhotoImage(logoMcom)
         self.labelMcom = ttk.Label(self, image=self.logoMcom)
         self.labelMcom.configure(padding=5, border=0)
@@ -320,10 +320,10 @@ class MCOMSearch(ttk.Frame):
         if tutorial == '':
             mb = Messagebox.show_question(Text, title=code, buttons=['No:secondary', 'Yes:primary'])
         else:
-            mb = Messagebox.show_question(Text, title=code, buttons=['Assistir tutorial:dark', 'No:secondary', 'Yes:primary'])
+            mb = Messagebox.show_question(Text, title=code, buttons=['Tutorial:dark', 'No:secondary', 'Yes:primary'])
             if mb == "Assistir tutorial":
                 cmd = self.data[code]["tutorial"]
-                print(f'valor do tutorial: {tutorial}')
+                #print(f'valor do tutorial: {tutorial}')
                 logging.info(f"Browser:{cmd}")
                 webbrowser.open(cmd)
 
@@ -485,7 +485,7 @@ if __name__ == '__main__':
     except Exception as e:
         logging.critical(e, exc_info=True) 
 
-    app = ttk.Window("TVBox - TED MCOM", iconphoto="img/Logo-FenixBook-elemento.png")
+    app = ttk.Window("FenixApp", iconphoto="img/Logo-FenixBook-elemento.png")
     app.place_window_center()
     app.style.load_user_themes('fenixbook_themes.json')
     app.style.theme_use('fenixbooktheme1')
@@ -494,7 +494,7 @@ if __name__ == '__main__':
     img = img.resize((int(img.size[0] / 8), int(img.size[1] / 8)), Image.LANCZOS)
     logo = ImageTk.PhotoImage(img)
     label = ttk.Label(app, image=logo)
-    label.configure(padding=0, border=0)
+    label.configure(padding=15)
     label.pack()
 
     app.resizable(False, False)
