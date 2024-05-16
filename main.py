@@ -321,7 +321,7 @@ class MCOMSearch(ttk.Frame):
             mb = Messagebox.show_question(Text, title=code, buttons=['No:secondary', 'Yes:primary'])
         else:
             mb = Messagebox.show_question(Text, title=code, buttons=['Tutorial:dark', 'No:secondary', 'Yes:primary'])
-            if mb == "Assistir tutorial":
+            if mb == "Tutorial":
                 cmd = self.data[code]["tutorial"]
                 #print(f'valor do tutorial: {tutorial}')
                 logging.info(f"Browser:{cmd}")
