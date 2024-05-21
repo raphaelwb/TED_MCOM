@@ -1,0 +1,7 @@
+[Desktop Entry]
+Version=1.0
+Name=FenixApp
+Icon=/home/minipc/fenixApp/img/Logo-FenixBook-elemento.png
+Exec=/home/minipc/fenixApp/fenixAppExec.sh
+Terminal=false
+Type=Application
