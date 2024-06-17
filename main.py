@@ -66,7 +66,7 @@ class PrepareData:
         return needUpdate
     
     def toText(self,languages):
-        print(languages)
+        #print(languages)
         txt = ""
         for i in range(len(languages)-1):
             txt += languages[i] + ","
@@ -103,6 +103,15 @@ class PrepareData:
                 self.df.fillna('', inplace=True)
                 tutorial = self.df.iloc[l]["Tutorial"]
 
+                content = "B"
+
+                if self.df.iloc[l]["Lógica"] == 'x':
+                    content = "L"
+
+                logging.info(self.df.iloc[l]["Código"])
+                logging.info(self.df.iloc[l]["Lógica"])
+                logging.info(content)
+
                 objects.append({"code":str(self.df.iloc[l]["Código"]),
                             "title":str(self.df.iloc[l]["Título"]),
                             "description":str(self.df.iloc[l]["Descrição"]),
@@ -111,7 +120,8 @@ class PrepareData:
                             "keys":self.addElement(str(self.df.iloc[l]["Palavras Chave"]),keys),
                             "language":self.addElement(str(self.df.iloc[l]["Idiomas"]),language),
                             "hardware":self.addElement(str(self.df.iloc[l]["Hardware"]),hardware),
-                            "tutorial": tutorial
+                            "tutorial": tutorial,
+                            "content": content
                             })
 
 
@@ -142,7 +152,7 @@ class PrepareData:
             sql = "CREATE TABLE data_hardware (id INTEGER PRIMARY KEY AUTOINCREMENT, data_id INTEGER, hardware_id INTEGER, FOREIGN KEY(data_id) REFERENCES data(id), FOREIGN KEY(hardware_id) REFERENCES hardware(id))"
             cur.execute(sql)
 
-            sql = "CREATE TABLE data(id INTEGER PRIMARY KEY AUTOINCREMENT, code TEXT, title TEXT, description TEXT, type INTEGER, data TEXT, languages TEXT, tutorial TEXT)"
+            sql = "CREATE TABLE data(id INTEGER PRIMARY KEY AUTOINCREMENT, code TEXT, title TEXT, description TEXT, type INTEGER, data TEXT, languages TEXT, tutorial TEXT, content TEXT)"
 
             cur.execute(sql)
 
@@ -151,7 +161,7 @@ class PrepareData:
             hardware = list(hardware)
 
             for o in objects:
-                sql = "INSERT INTO data(code,title,description,type,data,languages,tutorial) VALUES('%s','%s','%s','%s','%s','%s','%s')" % (o["code"],o["title"],o["description"],o["type"],o["data"],self.toText(o["language"]),o["tutorial"])
+                sql = "INSERT INTO data(code,title,description,type,data,languages,tutorial,content) VALUES('%s','%s','%s','%s','%s','%s','%s','%s')" % (o["code"],o["title"],o["description"],o["type"],o["data"],self.toText(o["language"]),o["tutorial"],o["content"])
                 logging.info(sql)
                 cur.execute(sql)
                 data_id = cur.lastrowid
@@ -397,6 +407,8 @@ class MCOMSearch(ttk.Frame):
                 self.insert_row(i,info["title"],info["type"])
             self.search_btn.state(["!disabled"])
             self.progressbar.stop()
+            if ( len(self.data) == 0 ):
+                Messagebox.show_info("Nada foi encontrado", "Resultado")
         else:
             self.after(100, lambda: self.check_queue())
          
@@ -428,29 +440,37 @@ class MCOMSearch(ttk.Frame):
         if ( check_file == False ):
              with open(propFile, 'w') as f:
                 f.write('HARDWARE=LINK')
+                f.write('\n')
+                f.write('SEARCH_TYPE=A')
         
         with open(propFile, 'rb') as config_file:
             props.load(config_file)
         hardware = props["HARDWARE"].data
+        type = props["SEARCH_TYPE"].data
         
         logging.info(hardware)
         #TODO resolver o problema de usar multiplas Threads para abrir o DB apenas uma vez
         conn = sqlite3.connect(dbFile)        
         cur = conn.cursor()
 
+        typeFilter = ""
+        if ( type != "A" ):
+            #Logic
+            typeFilter = " and content = '"+type+"'"
+      
         if ( hardware == "LINK"):
             sql = "Select * from data,data_keys,keys where data.type = 0 and data_keys.data_id = data.id and data_keys.key_id = keys.id and "\
             "((title like '%"+term+"%' or description like '%"+term+"%') OR "\
-            "(data_keys.data_id = data.id and data_keys.key_id = keys.id and keys.text like '%"+term+"%'))"
+            "(data_keys.data_id = data.id and data_keys.key_id = keys.id and keys.text like '%"+term+"%'))"+typeFilter
         elif ( hardware == "ALL"):
             sql = "Select * from data,data_keys,keys where data_keys.data_id = data.id and data_keys.key_id = keys.id and "\
             "((title like '%"+term+"%' or description like '%"+term+"%') OR "\
-            "(data_keys.data_id = data.id and data_keys.key_id = keys.id and keys.text like '%"+term+"%'))"
+            "(data_keys.data_id = data.id and data_keys.key_id = keys.id and keys.text like '%"+term+"%'))"+typeFilter
         else:
             sql = "Select * from data,data_keys,keys,data_hardware,hardware where data_keys.data_id = data.id and data_keys.key_id = keys.id and "\
             "data_hardware.hardware_id = hardware.id and data_hardware.data_id = data.id and hardware.text = '"+hardware+"' AND ("\
             "((title like '%"+term+"%' or description like '%"+term+"%') OR "\
-            "(data_keys.data_id = data.id and data_keys.key_id = keys.id and keys.text like '%"+term+"%')))"
+            "(data_keys.data_id = data.id and data_keys.key_id = keys.id and keys.text like '%"+term+"%')))"+typeFilter
             
         logging.info(sql)
         cur.execute(sql)
