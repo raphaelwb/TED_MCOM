@@ -3,3 +3,4 @@ jproperties==2.1.1
 pandas
 requests==2.31.0
 numpy==1.26.4
+tkinter
