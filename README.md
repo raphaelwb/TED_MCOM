@@ -12,8 +12,10 @@ cp conf.properties ~/.mcom
 ```
 
 # Install Linux
-sudo apt-get install python3-tk
-bash <(curl -s https://raw.githubusercontent.com/raphaelwb/TED_MCOM/main/install.sh)   
+sudo apt-get install python3-tk  
+sudo apt-get install python3-venv  
+sudo apt-get install python3-pip  
+bash <(curl -s https://raw.githubusercontent.com/raphaelwb/TED_MCOM/main/install.sh)  
 python3 main.py
 
 # Install Windows
