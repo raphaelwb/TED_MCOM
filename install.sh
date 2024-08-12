@@ -1,4 +1,6 @@
 #!/bin/bash
+mkdir fenixApp
+cd fenixApp
 curl  https://raw.githubusercontent.com/raphaelwb/TED_MCOM/main/requirements.txt > requirements.txt
 curl  https://raw.githubusercontent.com/raphaelwb/TED_MCOM/main/main.py > main.py
 curl  https://raw.githubusercontent.com/raphaelwb/TED_MCOM/main/fenixbook_themes.json > fenixbook_themes.json
