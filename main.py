@@ -239,10 +239,10 @@ class MCOMSearch(ttk.Frame):
         self.progressbar.pack(fill=X, expand=YES)
 
         logoMcom = Image.open('img/logos_ci_ufla_mcom.png')
-        logoMcom = logoMcom.resize((int(logoMcom.size[0] / 5), int(logoMcom.size[1] / 5)), Image.HAMMING)
+        logoMcom = logoMcom.resize((int(logoMcom.size[0] / 4.5), int(logoMcom.size[1] / 4.5)), Image.HAMMING)
         self.logoMcom = ImageTk.PhotoImage(logoMcom)
         self.labelMcom = ttk.Label(self, image=self.logoMcom)
-        self.labelMcom.configure(padding=5, border=0)
+        self.labelMcom.configure(padding=2, border=0)
         self.labelMcom.pack()
 
 
