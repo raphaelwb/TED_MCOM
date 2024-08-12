@@ -7,7 +7,7 @@ curl  https://raw.githubusercontent.com/raphaelwb/TED_MCOM/main/fenixAppExec.sh 
 mkdir img
 curl https://raw.githubusercontent.com/raphaelwb/TED_MCOM/main/img/Logo-FenixBook-elemento.png > ./img/Logo-FenixBook-elemento.png
 curl https://raw.githubusercontent.com/raphaelwb/TED_MCOM/main/img/Logo-FenixBook-horizontal.png > ./img/Logo-FenixBook-horizontal.png
-curl https://raw.githubusercontent.com/raphaelwb/TED_MCOM/main/img/logos_ci_ufla_mcom.png.png > ./img/logos_ci_ufla_mcom.png
+curl https://raw.githubusercontent.com/raphaelwb/TED_MCOM/main/img/logos_ci_ufla_mcom.png > ./img/logos_ci_ufla_mcom.png
 python3 -m venv venv
 source venv/bin/activate
 pip3 install -r requirements.txt
