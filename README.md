@@ -12,11 +12,17 @@ cp conf.properties ~/.mcom
 ```
 
 # Install Linux
-sudo apt-get install python3-tk  
-sudo apt-get install python3-venv  
-sudo apt-get install python3-pip  
+sudo apt install python3-tk  
+sudo apt install python3-venv  
+sudo apt install python3-pip  
 bash <(curl -s https://raw.githubusercontent.com/raphaelwb/TED_MCOM/main/install.sh)  
 python3 main.py
+## Adicionar ícone
+cd fenixApp para entrar na pasta 
+chmod +x fenixAppExec.sh para permitir a execução do arquivo
+sudo mkdir /usr/share/icons/fenixApp para criar uma pasta para adicionar a logo do fenixBook
+sudo cp ~/fenixApp/img/Logo-FenixBook-elemento.png /usr/share/icons/fenixApp/
+sudo mv ~/fenixApp/fenixApp.desktop /usr/share/applications/ para que o ícone do aplicativo fique visível 
 
 # Install Windows
 Open terminal and type python, follow instructions   
