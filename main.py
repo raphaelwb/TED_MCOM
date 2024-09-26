@@ -208,6 +208,45 @@ from jproperties import Properties
 from ttkbootstrap.dialogs import Messagebox
 from PIL import Image, ImageTk
 
+
+class CustomMessagebox:
+    def __init__(self, parent, title, text, buttons):
+        self.top = ttk.Toplevel(parent)
+        self.top.title(title)
+        self.top.style.configure('TButton', font=('Helvetica', 10))
+
+
+        # Criação do texto da mensagem
+        label = ttk.Label(self.top, text=text, wraplength=280)
+        label.pack(pady=10, padx=10)
+
+        # Calcular altura com base no tamanho do texto
+        num_lines = text.count('\n') + 1
+        base_height = 100  # Altura mínima
+        additional_height = num_lines * 20  # Altura por linha de texto
+        total_height = base_height + additional_height
+
+        # Ajustar a altura da janela dinamicamente
+        self.top.geometry(f"300x{total_height}")
+
+        # Criação dos botões dinâmicos
+        self.result = None
+        button_frame = ttk.Frame(self.top)
+        button_frame.pack(pady=10)
+        for button in buttons:
+            btn_text, btn_style = button.split(":")
+            button = ttk.Button(button_frame, text=btn_text, style=f'{btn_style}.TButton', command=lambda b=btn_text: self.on_button_click(b))
+            button.pack(side=ttk.LEFT, padx=5)
+
+    def on_button_click(self, button):
+        self.result = button
+        self.top.destroy()
+
+    def show(self):
+        self.top.grab_set()
+        self.top.wait_window()
+        return self.result
+
 class MCOMSearch(ttk.Frame):
 
     data = {}
@@ -308,7 +347,7 @@ class MCOMSearch(ttk.Frame):
         )
         endswith_opt.pack(side=LEFT)
         endswith_opt.invoke()
-
+    '''
     def showItem(self,a):   
         curItem = self.resultview.focus()
         item = self.resultview.item(curItem)
@@ -341,6 +380,47 @@ class MCOMSearch(ttk.Frame):
             cmd = self.data[code]["data"]
             if ( item['values'][2] == "Link"):
                 logging.info(f"Browser:{cmd}")
+                webbrowser.open(cmd)
+            else:
+                logging.info(f"System: {cmd}")
+                os.system(cmd)
+
+    '''
+
+    def showItem(self, a):
+        curItem = self.resultview.focus()
+        item = self.resultview.item(curItem)
+        if not item['values']:
+            return
+        code = item['values'][0]
+        data = self.data[code]
+        title = data["title"]
+        description = data["description"]
+        languages = data["languages"]
+        tutorial = data["tutorial"]
+
+        text = f"Código: {code}\n" \
+               f"Título: {title}\n" \
+               f"Descrição: {description}\n" \
+               f"Idiomas: {languages}\n\n" \
+               f"Clique Sim para acessar o conteúdo ..."
+
+        if tutorial == '':
+            custom_mb = CustomMessagebox(self.master, title=code, text=text, buttons=['No:secondary', 'Yes:primary'])
+        else:
+            custom_mb = CustomMessagebox(self.master, title=code, text=text, buttons=['Tutorial:dark', 'No:secondary', 'Yes:primary'])
+
+        result = custom_mb.show()
+
+        if result == "Tutorial":
+            cmd = self.data[code]["tutorial"]
+            logging.info(f"Browser: {cmd}")
+            webbrowser.open(cmd)
+
+        if result == "Yes":
+            cmd = self.data[code]["data"]
+            if item['values'][2] == "Link":
+                logging.info(f"Browser: {cmd}")
                 webbrowser.open(cmd)
             else:
                 logging.info(f"System: {cmd}")
