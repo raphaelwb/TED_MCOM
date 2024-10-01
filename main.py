@@ -18,6 +18,9 @@ import sys
 from pathlib import Path
 import logging
 
+from PIL.ImageOps import expand
+
+
 class PrepareData:
 
     def __init__(self):
@@ -212,31 +215,25 @@ from PIL import Image, ImageTk
 class CustomMessagebox:
     def __init__(self, parent, title, text, buttons):
         self.top = ttk.Toplevel(parent)
-        self.top.title(title)
-        self.top.style.configure('TButton', font=('Helvetica', 10))
-
+        self.top.title(title)  
+        self.top.style.configure('TButton')
+        self.top.resizable(False, False)
+        self.top.place_window_center()
 
         # Criação do texto da mensagem
-        label = ttk.Label(self.top, text=text, wraplength=280)
-        label.pack(pady=10, padx=10)
-
-        # Calcular altura com base no tamanho do texto
-        num_lines = text.count('\n') + 1
-        base_height = 100  # Altura mínima
-        additional_height = num_lines * 20  # Altura por linha de texto
-        total_height = base_height + additional_height
-
-        # Ajustar a altura da janela dinamicamente
-        self.top.geometry(f"300x{total_height}")
+        label = ttk.Label(self.top, text=text, padding=(10, 10) ,wraplength=360)
+        label.pack(pady=5, padx=10)
 
         # Criação dos botões dinâmicos
         self.result = None
         button_frame = ttk.Frame(self.top)
-        button_frame.pack(pady=10)
+        button_frame.pack(side=ttk.RIGHT, padx=10, pady=10)
         for button in buttons:
             btn_text, btn_style = button.split(":")
             button = ttk.Button(button_frame, text=btn_text, style=f'{btn_style}.TButton', command=lambda b=btn_text: self.on_button_click(b))
-            button.pack(side=ttk.LEFT, padx=5)
+            button.pack(side=ttk.LEFT, padx=2)
+        self.top.transient(parent)
+
 
     def on_button_click(self, button):
         self.result = button
@@ -246,6 +243,7 @@ class CustomMessagebox:
         self.top.grab_set()
         self.top.wait_window()
         return self.result
+
 
 class MCOMSearch(ttk.Frame):
 
@@ -260,7 +258,7 @@ class MCOMSearch(ttk.Frame):
         _path = pathlib.Path().absolute().as_posix()
         self.path_var = ttk.StringVar(value=_path)
         #self.term_var = ttk.StringVar(value='Digite o termo da busca')
-        self.term_var = ttk.StringVar(value='code')
+        self.term_var = ttk.StringVar(value='')
         self.type_var = ttk.StringVar(value='endswidth')
 
         option_text = "Preencha com os dados da busca"
@@ -314,6 +312,8 @@ class MCOMSearch(ttk.Frame):
             bootstyle=OUTLINE, 
             width=8
         )
+        term_ent.bind('<Return>', lambda event: self.on_search())
+
         search_btn.pack(side=LEFT, padx=5)
         self.search_btn = search_btn
         
@@ -399,16 +399,16 @@ class MCOMSearch(ttk.Frame):
         languages = data["languages"]
         tutorial = data["tutorial"]
 
-        text = f"Código: {code}\n" \
-               f"Título: {title}\n" \
-               f"Descrição: {description}\n" \
+        text = f"Código: {code}\n\n" \
+               f"Título: {title}\n\n" \
+               f"Descrição: {description}\n\n" \
                f"Idiomas: {languages}\n\n" \
                f"Clique Sim para acessar o conteúdo ..."
 
         if tutorial == '':
-            custom_mb = CustomMessagebox(self.master, title=code, text=text, buttons=['No:secondary', 'Yes:primary'])
+            custom_mb = CustomMessagebox(self.master, title=code, text=text, buttons=['Não:secondary', 'Sim:primary'])
         else:
-            custom_mb = CustomMessagebox(self.master, title=code, text=text, buttons=['Tutorial:dark', 'No:secondary', 'Yes:primary'])
+            custom_mb = CustomMessagebox(self.master, title=code, text=text, buttons=['Tutorial:dark', 'Não:secondary', 'Sim:primary'])
 
         result = custom_mb.show()
 
@@ -417,7 +417,7 @@ class MCOMSearch(ttk.Frame):
             logging.info(f"Browser: {cmd}")
             webbrowser.open(cmd)
 
-        if result == "Yes":
+        if result == "Yes" or result == "Sim":
             cmd = self.data[code]["data"]
             if item['values'][2] == "Link":
                 logging.info(f"Browser: {cmd}")
@@ -488,7 +488,8 @@ class MCOMSearch(ttk.Frame):
             self.search_btn.state(["!disabled"])
             self.progressbar.stop()
             if ( len(self.data) == 0 ):
-                Messagebox.show_info("Nada foi encontrado", "Resultado")
+                #Messagebox.show_info("Nada foi encontrado", "Resultado")
+                custom_mb = CustomMessagebox(self.master, title="Resultado", text="Nada foi encontrado.", buttons=[])
         else:
             self.after(100, lambda: self.check_queue())
          
@@ -586,6 +587,7 @@ if __name__ == '__main__':
         logging.critical(e, exc_info=True) 
 
     app = ttk.Window("FenixApp", iconphoto="img/Logo-FenixBook-elemento.png")
+
     app.place_window_center()
     app.style.load_user_themes('fenixbook_themes.json')
     app.style.theme_use('fenixbooktheme1')
